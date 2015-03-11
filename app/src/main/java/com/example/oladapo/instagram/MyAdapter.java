@@ -1,10 +1,13 @@
 package com.example.oladapo.instagram;
 
 import android.content.Context;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
 
@@ -23,7 +26,7 @@ public class MyAdapter extends BaseAdapter implements Interface_API{
 
     private static MyAdapter instance;
 
-    private List<String> data;
+    private ArrayList<String> data;
     private Context context;
     private View container;
 
@@ -75,6 +78,26 @@ public class MyAdapter extends BaseAdapter implements Interface_API{
 
 //        //We use Picasso library to handle memory and performance.
         Picasso.with(context).load(getItem(i)).resize(size, size).into(imageView);
+        imageView.setTag(getItem(i));
+        imageView.setOnDragListener(new View.OnDragListener() {
+
+
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                if (event.getAction() == DragEvent.ACTION_DROP){
+                    View view = (View) event.getLocalState();
+                    int selectedIndex = data.indexOf(v.getTag().toString());
+                    data.remove(view.getTag().toString());
+                    data.add(selectedIndex, view.getTag().toString());
+                    notifyDataSetChanged();
+
+                }
+
+
+                return true;
+            }
+        });
+
         return imageView;
     }
 
@@ -86,6 +109,11 @@ public class MyAdapter extends BaseAdapter implements Interface_API{
 
     @Override
     public void onFail(Exception exception) {
+
+    }
+
+    public List<String> getData() {
+        return data;
 
     }
 
